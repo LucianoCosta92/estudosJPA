@@ -30,7 +30,7 @@ public class App {
 				if (scan.hasNextInt()) {
 					op = scan.nextInt();
 				} else {
-					System.out.println("Erro: entrada inválida!");
+					System.out.println("\nErro: entrada inválida!");
 					scan.next();
 					continue; // reinicia o loop
 				}
@@ -52,7 +52,7 @@ public class App {
 					System.out.println("Excluindo...");
 					break;
 				case 0:
-					System.out.println("Fim do programa!");
+					System.out.println("\nFim do programa!");
 					break;
 				default:
 					System.out.println("Opção inválida!");
@@ -165,7 +165,7 @@ public class App {
 			
 			Veiculo veiculo = manager.find(Veiculo.class, id);
 			if (veiculo == null) {
-				System.out.println("Nenhum veículo encontrado com esse Id!");
+				System.out.println("\nNenhum veículo encontrado com esse Id!");
 				return;
 			}
 			System.out.println();
