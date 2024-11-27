@@ -1,5 +1,6 @@
 package domain;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -12,7 +13,12 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tab_veiculo")
-public class Veiculo {
+public class Veiculo implements Serializable {
+	/* Serializable = salva o estado atual dos objetos em arquivos em formato binário para o seu computador, 
+	sendo assim esse estado poderá ser recuperado posteriormente recriando o objeto em memória 
+	assim como ele estava no momento da sua serialização.*/
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // PK auto_increment
 	private Long codigo;
