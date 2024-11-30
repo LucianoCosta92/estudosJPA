@@ -1,8 +1,10 @@
 package app;
 
 import java.math.BigDecimal;
+import java.nio.channels.Pipe.SourceChannel;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ForkJoinPool.ManagedBlocker;
 
 import domain.Veiculo;
 import factory.JpaUtil;
@@ -22,7 +24,7 @@ public class App {
 				System.out.println("1 - Cadastrar");
 				System.out.println("2 - Listar");
 				System.out.println("3 - Buscar por ID");
-				System.out.println("4 - Editar");
+				System.out.println("4 - Busca por inicial");
 				System.out.println("5 - Excluir");
 				System.out.println("0 - Sair");
 				System.out.print("Escolha: ");
@@ -46,7 +48,7 @@ public class App {
 					buscarID();
 					break;
 				case 4:
-					System.out.println("Editando...");
+					buscaTeste();
 					break;
 				case 5:
 					System.out.println("Excluindo...");
@@ -183,6 +185,37 @@ public class App {
 			// entrada.close();
 		}
 
+	}
+	
+	public static void buscaTeste() {
+		EntityManager manager = JpaUtil.getEntityManager();
+		Scanner entrada = new Scanner(System.in);
+		
+		try {
+			String fabricante;
+			System.out.print("Digite a inicial do fabricante do veículo que deseja buscar: ");
+			fabricante = entrada.nextLine();
+			
+			Query query = manager.createQuery("select v from Veiculo v where v.fabricante like concat (:fabricante, '%')").setParameter("fabricante", fabricante);
+			@SuppressWarnings("unchecked")
+			List<Veiculo> veiculos = query.getResultList();
+			
+			for (Veiculo v : veiculos) {
+				System.out.println();
+				System.out.println("Código: " + v.getCodigo());
+				System.out.println("Fabricante: " + v.getFabricante());
+				System.out.println("Modelo: " + v.getModelo());
+				System.out.println("Ano de fabricação: " + v.getAnoFabricacao());
+				System.out.println("Ano do modelo: " + v.getAnoModelo());
+				System.out.println("Valor: R$ " + v.getValor());
+			}
+			
+		} catch (Exception e) {
+			System.out.println("Erro: " + e);
+		} finally {
+			manager.close();
+		}
+		
 	}
 	
 }
