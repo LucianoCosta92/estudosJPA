@@ -3,6 +3,7 @@ package app;
 import java.math.BigDecimal;
 import java.nio.channels.Pipe.SourceChannel;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.concurrent.ForkJoinPool.ManagedBlocker;
 
@@ -26,6 +27,7 @@ public class App {
 				System.out.println("3 - Buscar por ID");
 				System.out.println("4 - Busca por inicial");
 				System.out.println("5 - Excluir");
+				System.out.println("6 - Alterar");
 				System.out.println("0 - Sair");
 				System.out.print("Escolha: ");
 
@@ -51,7 +53,10 @@ public class App {
 					buscaTeste();
 					break;
 				case 5:
-					System.out.println("Excluindo...");
+					deletar();
+					break;
+				case 6:
+					alterar();
 					break;
 				case 0:
 					System.out.println("\nFim do programa!");
@@ -67,6 +72,13 @@ public class App {
 		
 		scan.close();
 		JpaUtil.close(); // O EntityManagerFactory deve ser fechado apenas uma vez, geralmente no encerramento da aplicação
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static void limpaBuffer(Scanner scan) {
+		if (scan.hasNextLine()) {
+			scan.nextLine();
+		}
 	}
 	
 	public static void cadastrar() {
@@ -125,7 +137,6 @@ public class App {
 			e.printStackTrace();
 		} finally {
 			manager.close();
-			// entrada.close();
 		}
 	}
 	
@@ -179,10 +190,9 @@ public class App {
 			System.out.println("Valor: R$ " + veiculo.getValor());
 			
 		} catch (Exception e) {
-			System.out.println("Erro aoa fazer busca: " + e.getMessage());
+			System.out.println("Erro ao fazer busca: " + e.getMessage());
 		} finally {
 			manager.close();
-			// entrada.close();
 		}
 
 	}
@@ -218,4 +228,106 @@ public class App {
 		
 	}
 	
+	public static void deletar() {
+		
+		EntityManager manager = JpaUtil.getEntityManager();
+		EntityTransaction tx = manager.getTransaction();
+		Scanner entrada = new Scanner(System.in);
+		
+		try {
+			System.out.print("Digite o ID do veículo que deseja deletar: ");
+			int id = entrada.nextInt();
+			
+			tx.begin();
+			Veiculo veiculo = manager.find(Veiculo.class, id);
+			Optional<Veiculo> optionalVeiculo = Optional.of(veiculo);
+			optionalVeiculo.ifPresent(v -> manager.remove(v));
+			
+			/*if (veiculo == null) {
+				System.out.println("\nNenhum veículo encontrado com esse ID!");
+				return;
+			}*/
+			
+			// manager.remove(veiculo);
+			tx.commit();
+			
+			System.out.println(veiculo.getModelo() + " excluído com sucesso!");
+			
+		} catch (Exception e) {
+			System.out.println("Erro ao tentar excluir: " + e.getMessage());
+		} finally {
+			manager.close();
+		}
+		
+	}
+	
+	public static void alterar() {
+		EntityManager manager = JpaUtil.getEntityManager();
+		EntityTransaction tx = manager.getTransaction();
+		Scanner entrada = new Scanner(System.in);
+		try {
+			System.out.print("Digite o ID do veículo que deseja editar: ");
+			int id = entrada.nextInt();
+			
+			tx.begin();
+			Veiculo veiculo = manager.find(Veiculo.class, id);
+			
+			System.out.println();
+			System.out.println("Código: " + veiculo.getCodigo());
+			System.out.println("Fabricante: " + veiculo.getFabricante());
+			System.out.println("Modelo: " + veiculo.getModelo());
+			System.out.println("Ano de fabricação: " + veiculo.getAnoFabricacao());
+			System.out.println("Ano do modelo: " + veiculo.getAnoModelo());
+			System.out.println("Valor: R$ " + veiculo.getValor());
+			System.out.println();
+			
+			limpaBuffer(entrada);
+			System.out.print("Fabricante: ");
+			String f = entrada.nextLine();
+			System.out.print("Modelo: ");
+			String m = entrada.nextLine();
+			System.out.print("Ano de fabricação: ");
+			int af = 0;
+			if (entrada.hasNextInt()) {
+				af = entrada.nextInt();
+			} else {
+				System.out.println("Erro: entrada inválida!");
+				entrada.next();
+				return;
+			}
+			System.out.print("Ano do modelo: ");
+			int am = 0;
+			if (entrada.hasNextInt()) {
+				am = entrada.nextInt();
+			} else {
+				System.out.println("Erro: entrada inválida!");
+				entrada.next();
+				return;
+			}
+			System.out.print("Valor: ");
+			BigDecimal v = null;
+			if (entrada.hasNextDouble()) {
+				v = entrada.nextBigDecimal();
+			} else {
+				System.out.println("Erro: entrada inválida!");
+				entrada.next();
+				return;
+			}
+			
+			veiculo.setFabricante(f);
+			veiculo.setModelo(m);
+			veiculo.setAnoFabricacao(af);
+			veiculo.setAnoModelo(am);
+			veiculo.setValor(v);
+			
+			tx.commit();
+			System.out.println(veiculo.getModelo() + " alterado com sucesso!");
+			
+		} catch (Exception e) {
+			System.out.println("Erro ao tentar editar: " + e.getMessage());
+		} finally {
+			manager.close();
+		}
+		
+	}
 }
