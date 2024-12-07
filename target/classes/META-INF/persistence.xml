@@ -16,9 +16,15 @@
 		
 		<!-- cria automaticamente banco de dados e atualiza cada vez que for rodado -->
 		<property name="hibernate.hbm2ddl.auto" value="update" /> 
-
+	
+		<property name="jakarta.persistence.sql-load-script-source" value="META-INF/script.sql" />
+		
 		<!-- https://docs.jboss.org/hibernate/orm/5.4/javadocs/org/hibernate/dialect/package-summary.html -->
 		<!-- <property name="hibernate.dialect" 	value="org.hibernate.dialect.MySQLDialect" /> -->
+		
+		<!-- Mostra a consulta SQL na saída -->
+		<property name="hibernate.show_sql" value="true" />
+		<property name="hibernate.format_sql" value="true" />
 	</properties>
 	</persistence-unit>
 </persistence>
