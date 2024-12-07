@@ -305,9 +305,9 @@ public class App {
 				return;
 			}
 			System.out.print("Valor: ");
-			BigDecimal v = null;
+			Double v = 0.0;
 			if (entrada.hasNextDouble()) {
-				v = entrada.nextBigDecimal();
+				v = entrada.nextDouble();
 			} else {
 				System.out.println("Erro: entrada inválida!");
 				entrada.next();
@@ -318,7 +318,7 @@ public class App {
 			veiculo.setModelo(m);
 			veiculo.setAnoFabricacao(af);
 			veiculo.setAnoModelo(am);
-			veiculo.setValor(v);
+			veiculo.setValor(new BigDecimal(v));
 			
 			tx.commit();
 			System.out.println(veiculo.getModelo() + " alterado com sucesso!");
